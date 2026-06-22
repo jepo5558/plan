@@ -77,9 +77,8 @@ function handleStatusUpdate(request, response, requestUrl) {
     }
 
     try {
-      const indexPath = path.join(rootDir, "data", "plans-index.json");
-      const planPaths = JSON.parse(fs.readFileSync(indexPath, "utf8"));
-      const relativePlanPath = planPaths.find((item) => path.basename(item, ".json") === planId);
+      const planLookup = findPlanPath(planId);
+      const relativePlanPath = planLookup.relativePath;
 
       if (!relativePlanPath) {
         sendJson(response, 404, { error: "Plan not found." });
@@ -107,6 +106,19 @@ function handleStatusUpdate(request, response, requestUrl) {
       });
 
       fs.writeFileSync(planPath, `${JSON.stringify(plan, null, 2)}\n`, "utf8");
+
+      if (planLookup.storage === "local") {
+        sendJson(response, 200, {
+          plan,
+          sync: {
+            ok: true,
+            skipped: true,
+            output: "Local-only plan saved without GitHub sync."
+          }
+        });
+        return;
+      }
+
       syncPlanChange(relativePlanPath, plan, (syncError, syncResult) => {
         if (syncError) {
           sendJson(response, 200, {
@@ -132,6 +144,28 @@ function handleStatusUpdate(request, response, requestUrl) {
       sendJson(response, 500, { error: writeError.message });
     }
   });
+}
+
+function findPlanPath(planId) {
+  const indexes = [
+    { path: path.join(rootDir, "data", "plans-index.json"), storage: "sync" },
+    { path: path.join(rootDir, "data", "local-plans-index.json"), storage: "local" }
+  ];
+
+  for (const index of indexes) {
+    if (!fs.existsSync(index.path)) {
+      continue;
+    }
+
+    const planPaths = JSON.parse(fs.readFileSync(index.path, "utf8"));
+    const relativePath = planPaths.find((item) => path.basename(item, ".json") === planId);
+
+    if (relativePath) {
+      return { relativePath, storage: index.storage };
+    }
+  }
+
+  return { relativePath: null, storage: null };
 }
 
 function syncPlanChange(relativePlanPath, plan, callback) {

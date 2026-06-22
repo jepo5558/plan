@@ -72,6 +72,31 @@ The GitHub sync requires:
 - Your Git authentication is available locally.
 - The working tree does not have unrelated conflicting changes.
 
+## Local-Only Plans
+
+Use local-only plans when you want an item to appear at:
+
+```text
+http://127.0.0.1:5173/dashboard/
+```
+
+but not at:
+
+```text
+https://jepo5558.github.io/plan/
+```
+
+Local-only plans are stored under:
+
+```text
+data/local-plans/
+data/local-plans-index.json
+```
+
+These paths are ignored by Git and are not pushed to GitHub. The local
+dashboard loads both synced plans and local-only plans. GitHub Pages only loads
+`data/plans-index.json`.
+
 ## Validate Plan Data
 
 Run:

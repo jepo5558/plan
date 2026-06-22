@@ -146,26 +146,39 @@ const translations = {
 };
 
 async function loadPlans() {
-  const indexResponse = await fetch("../data/plans-index.json");
+  const planPaths = await loadPlanIndex("../data/plans-index.json");
+  const localPlanPaths = isReadOnlyHost() ? [] : await loadPlanIndex("../data/local-plans-index.json", true);
+  const allPlanPaths = [...planPaths, ...localPlanPaths];
 
-  if (!indexResponse.ok) {
-    throw new Error("Could not load data/plans-index.json");
-  }
-
-  const planPaths = await indexResponse.json();
   const planResponses = await Promise.all(
-    planPaths.map(async (path) => {
+    allPlanPaths.map(async (path) => {
       const response = await fetch(`../${path}?t=${Date.now()}`);
 
       if (!response.ok) {
         throw new Error(`Could not load ${path}`);
       }
 
-      return response.json();
+      const plan = await response.json();
+      plan.storage = path.startsWith("data/local-plans/") ? "local" : "sync";
+      return plan;
     })
   );
 
   return planResponses.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+}
+
+async function loadPlanIndex(indexPath, optional = false) {
+  const indexResponse = await fetch(`${indexPath}?t=${Date.now()}`);
+
+  if (!indexResponse.ok) {
+    if (optional) {
+      return [];
+    }
+
+    throw new Error(`Could not load ${indexPath}`);
+  }
+
+  return indexResponse.json();
 }
 
 function uniqueValues(plans, field) {
@@ -259,6 +272,7 @@ function renderPlanList() {
             <span>${escapeHtml(translateValue(plan.context))}</span>
             <span>${escapeHtml(plan.agent)}</span>
             <span>${escapeHtml(plan.project)}</span>
+            ${plan.storage === "local" ? `<span class="badge">local</span>` : ""}
           </div>
           <div class="meta-row">
             <span class="badge ${badgeClass(plan.priority)}">${escapeHtml(translateValue(plan.priority))}</span>
@@ -285,6 +299,7 @@ function renderDetail() {
       <div class="meta-row">
         <span class="badge ${badgeClass(plan.status)}">${escapeHtml(translateValue(plan.status))}</span>
         <span class="badge ${badgeClass(plan.priority)}">${escapeHtml(translateValue(plan.priority))}</span>
+        ${plan.storage === "local" ? `<span class="badge">local</span>` : ""}
         <span>${escapeHtml(plan.project)}</span>
         <span>${t("created")} ${formatDate(plan.createdAt)}</span>
       </div>

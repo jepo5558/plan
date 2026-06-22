@@ -15,6 +15,8 @@ Repository rules:
 - Update data/plans-index.json when adding a new plan file.
 - Do not write sensitive company data.
 - For work context, use visibility: private and mask confidential details.
+- If the user says "local plan에 저장해줘", use data/local-plans/ and
+  data/local-plans-index.json instead. Do not push that local-only record.
 
 Plan metadata:
 - context:
@@ -92,4 +94,3 @@ Target plan id:
 
 Update request:
 ```
-

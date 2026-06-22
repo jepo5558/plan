@@ -3,6 +3,7 @@ const path = require("node:path");
 
 const rootDir = path.resolve(__dirname, "..");
 const indexPath = path.join(rootDir, "data", "plans-index.json");
+const localIndexPath = path.join(rootDir, "data", "local-plans-index.json");
 
 const allowedPlanStatuses = new Set(["planned", "active", "blocked", "review", "done", "archived"]);
 const allowedTaskStatuses = new Set(["todo", "doing", "blocked", "done"]);
@@ -28,10 +29,13 @@ const requiredFields = [
 
 function main() {
   const errors = [];
-  const planPaths = readJson(indexPath, errors);
+  const planPaths = [
+    ...readPlanIndex(indexPath, errors),
+    ...readPlanIndex(localIndexPath, errors, true)
+  ];
 
   if (!Array.isArray(planPaths)) {
-    errors.push("data/plans-index.json must be an array of plan file paths.");
+    errors.push("Plan indexes must be arrays of plan file paths.");
     finish(errors);
     return;
   }
@@ -54,6 +58,21 @@ function main() {
   finish(errors);
 }
 
+function readPlanIndex(filePath, errors, optional = false) {
+  if (optional && !fs.existsSync(filePath)) {
+    return [];
+  }
+
+  const planPaths = readJson(filePath, errors);
+
+  if (!Array.isArray(planPaths)) {
+    errors.push(`${path.relative(rootDir, filePath)} must be an array of plan file paths.`);
+    return [];
+  }
+
+  return planPaths;
+}
+
 function validatePlanPath(relativePath, seenPaths, errors) {
   if (typeof relativePath !== "string") {
     errors.push("Every plans-index entry must be a string.");
@@ -66,8 +85,8 @@ function validatePlanPath(relativePath, seenPaths, errors) {
 
   seenPaths.add(relativePath);
 
-  if (!relativePath.startsWith("data/plans/")) {
-    errors.push(`${relativePath}: path must start with data/plans/.`);
+  if (!relativePath.startsWith("data/plans/") && !relativePath.startsWith("data/local-plans/")) {
+    errors.push(`${relativePath}: path must start with data/plans/ or data/local-plans/.`);
   }
 
   if (!relativePath.endsWith(".json")) {
@@ -93,8 +112,9 @@ function validatePlan(relativePath, plan, errors) {
   }
 
   const parts = relativePath.split(/[\\/]/);
-  const contextFromPath = parts[2];
-  const agentFromPath = parts[3];
+  const isLocalPath = parts[1] === "local-plans";
+  const contextFromPath = isLocalPath ? parts[2] : parts[2];
+  const agentFromPath = isLocalPath ? parts[3] : parts[3];
   const fileId = path.basename(relativePath, ".json");
 
   if (plan.id !== fileId) {
@@ -179,4 +199,3 @@ function finish(errors) {
 }
 
 main();
-

@@ -38,6 +38,26 @@ data/plans/personal/codex/2026-06-22-local-dashboard.json
 data/plans/work/claude/2026-06-22-release-checklist.json
 ```
 
+## Local-Only File Location
+
+If the user says `local plan에 저장해줘` or asks for a plan to appear only in
+the local dashboard, do not write under `data/plans/`.
+
+Instead, create the plan under:
+
+```text
+data/local-plans/{context}/{agent}/{plan-id}.json
+```
+
+Then add the path to:
+
+```text
+data/local-plans-index.json
+```
+
+Local-only paths are ignored by Git. They are visible at the local dashboard
+but not at GitHub Pages.
+
 ## File Creation Rules
 
 - Create a new file for each new plan.
@@ -46,6 +66,7 @@ data/plans/work/claude/2026-06-22-release-checklist.json
 - Use lowercase kebab-case for `plan-id`.
 - Prefix plan IDs with the date when practical.
 - Update an existing plan file only when continuing the same plan.
+- Use `data/local-plans/` only for local-only records.
 
 ## Required Fields
 
@@ -151,4 +172,3 @@ priority: high
   ]
 }
 ```
-
