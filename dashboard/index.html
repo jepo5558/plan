@@ -57,29 +57,37 @@
           </div>
         </section>
 
+        <section class="section-heading">
+          <div>
+            <p class="eyebrow" data-i18n="focusEyebrow">Focus Board</p>
+            <h2 data-i18n="focusTitle">Time-sensitive work</h2>
+          </div>
+          <p data-i18n="focusDescription">Due-date based views for quick planning.</p>
+        </section>
+
         <section class="agenda-grid" aria-label="Schedule categories">
-          <article class="agenda-panel">
+          <article class="agenda-panel agenda-upcoming-card">
             <div class="agenda-header">
               <h3 data-i18n="agendaUpcoming">Upcoming</h3>
               <span class="agenda-count" id="agenda-upcoming-count">0</span>
             </div>
             <div class="agenda-list" id="agenda-upcoming"></div>
           </article>
-          <article class="agenda-panel">
+          <article class="agenda-panel agenda-week-card">
             <div class="agenda-header">
               <h3 data-i18n="agendaThisWeek">This Week Tasks</h3>
               <span class="agenda-count" id="agenda-this-week-count">0</span>
             </div>
             <div class="agenda-list" id="agenda-this-week"></div>
           </article>
-          <article class="agenda-panel">
+          <article class="agenda-panel agenda-overdue-card">
             <div class="agenda-header">
               <h3 data-i18n="agendaOverdue">Overdue</h3>
               <span class="agenda-count" id="agenda-overdue-count">0</span>
             </div>
             <div class="agenda-list" id="agenda-overdue"></div>
           </article>
-          <article class="agenda-panel">
+          <article class="agenda-panel agenda-review-card">
             <div class="agenda-header">
               <h3 data-i18n="agendaReview">Needs Review</h3>
               <span class="agenda-count" id="agenda-review-count">0</span>
@@ -122,7 +130,13 @@
         </section>
 
         <section class="content-grid">
-          <div class="plan-list" id="plan-list" aria-label="Plan list"></div>
+          <div class="list-panel">
+            <div class="panel-heading">
+              <h3 data-i18n="allPlans">All Plans</h3>
+              <span id="visible-count">0</span>
+            </div>
+            <div class="plan-list" id="plan-list" aria-label="Plan list"></div>
+          </div>
           <article class="detail-panel" id="plan-detail">
             <p class="empty-state" data-i18n="emptyDetail">Select a plan to inspect request, goal, tasks, and updates.</p>
           </article>
@@ -130,6 +144,6 @@
       </main>
     </div>
 
-    <script src="./app.js?v=20260623-3" type="module"></script>
+    <script src="./app.js?v=20260623-4" type="module"></script>
   </body>
 </html>

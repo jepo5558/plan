@@ -18,6 +18,7 @@ const state = {
 const elements = {
   list: document.querySelector("#plan-list"),
   detail: document.querySelector("#plan-detail"),
+  visibleCount: document.querySelector("#visible-count"),
   languageSelect: document.querySelector("#language-select"),
   i18nNodes: Array.from(document.querySelectorAll("[data-i18n]")),
   navItems: Array.from(document.querySelectorAll(".nav-item")),
@@ -66,6 +67,10 @@ const translations = {
     filterProject: "Project",
     filterStatus: "Status",
     filterPriority: "Priority",
+    focusEyebrow: "Focus Board",
+    focusTitle: "Time-sensitive work",
+    focusDescription: "Due-date based views for quick planning.",
+    allPlans: "All Plans",
     agendaUpcoming: "Upcoming",
     agendaThisWeek: "This Week Tasks",
     agendaOverdue: "Overdue",
@@ -73,6 +78,7 @@ const translations = {
     all: "All",
     updated: "Updated",
     created: "Created",
+    noDueDate: "No due date",
     changeStatus: "Change Status",
     interpretedGoal: "Interpreted Goal",
     originalRequest: "Original Request",
@@ -125,6 +131,10 @@ const translations = {
     filterProject: "\ud504\ub85c\uc81d\ud2b8",
     filterStatus: "\uc0c1\ud0dc",
     filterPriority: "\uc6b0\uc120\uc21c\uc704",
+    focusEyebrow: "\ud3ec\ucee4\uc2a4 \ubcf4\ub4dc",
+    focusTitle: "\uc2dc\uac04 \uae30\uc900 \uc791\uc5c5",
+    focusDescription: "\ub9c8\uac10\uc77c \uae30\uc900\uc73c\ub85c \ube60\ub974\uac8c \ud655\uc778\ud569\ub2c8\ub2e4.",
+    allPlans: "\uc804\uccb4 \uacc4\ud68d",
     agendaUpcoming: "\ub2e4\uac00\uc624\ub294 \uc77c\uc815",
     agendaThisWeek: "\uc774\ubc88 \uc8fc \ud560 \uc77c",
     agendaOverdue: "\uc9c0\uc5f0",
@@ -132,6 +142,7 @@ const translations = {
     all: "\uc804\uccb4",
     updated: "\uc218\uc815",
     created: "\uc0dd\uc131",
+    noDueDate: "\ub9c8\uac10\uc77c \uc5c6\uc74c",
     changeStatus: "\uc0c1\ud0dc \ubcc0\uacbd",
     interpretedGoal: "AI \ud574\uc11d \ubaa9\ud45c",
     originalRequest: "\uc6d0\ubb38 \uc694\uccad",
@@ -343,6 +354,8 @@ function badgeClass(value) {
 }
 
 function renderPlanList() {
+  elements.visibleCount.textContent = state.filteredPlans.length;
+
   if (state.filteredPlans.length === 0) {
     elements.list.innerHTML = `<p class="empty-state plan-card">${t("noPlans")}</p>`;
     return;
@@ -366,6 +379,7 @@ function renderPlanList() {
           </div>
           <div class="meta-row">
             <span class="badge ${badgeClass(plan.priority)}">${escapeHtml(translateValue(plan.priority))}</span>
+            <span>${plan.dueDate ? `${t("due")} ${formatDateOnly(plan.dueDate)}` : t("noDueDate")}</span>
             <span>${t("updated")} ${formatDate(plan.updatedAt)}</span>
           </div>
         </button>
@@ -391,6 +405,7 @@ function renderDetail() {
         <span class="badge ${badgeClass(plan.priority)}">${escapeHtml(translateValue(plan.priority))}</span>
         ${plan.storage === "local" ? `<span class="badge">local</span>` : ""}
         <span>${escapeHtml(plan.project)}</span>
+        <span>${plan.dueDate ? `${t("due")} ${formatDateOnly(plan.dueDate)}` : t("noDueDate")}</span>
         <span>${t("created")} ${formatDate(plan.createdAt)}</span>
       </div>
     </header>

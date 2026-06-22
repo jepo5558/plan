@@ -169,6 +169,25 @@ h2 {
   font-size: 13px;
 }
 
+.section-heading {
+  align-items: end;
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.section-heading h2 {
+  font-size: 20px;
+}
+
+.section-heading p:last-child {
+  color: var(--muted);
+  font-size: 13px;
+  margin-bottom: 2px;
+  max-width: 360px;
+  text-align: right;
+}
+
 .agenda-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(180px, 1fr));
@@ -182,6 +201,33 @@ h2 {
   box-shadow: var(--shadow);
   min-height: 150px;
   padding: 14px;
+  position: relative;
+}
+
+.agenda-panel::before {
+  border-radius: 8px 8px 0 0;
+  content: "";
+  height: 4px;
+  left: -1px;
+  position: absolute;
+  right: -1px;
+  top: -1px;
+}
+
+.agenda-upcoming-card::before {
+  background: #176b5b;
+}
+
+.agenda-week-card::before {
+  background: #3f6aa8;
+}
+
+.agenda-overdue-card::before {
+  background: #a53b3b;
+}
+
+.agenda-review-card::before {
+  background: #8a5d13;
 }
 
 .agenda-header {
@@ -229,6 +275,7 @@ h2 {
 }
 
 .agenda-item:hover {
+  background: #f5faf8;
   border-color: var(--accent);
 }
 
@@ -281,12 +328,38 @@ h2 {
   min-height: 420px;
 }
 
-.plan-list,
+.list-panel,
 .detail-panel {
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 8px;
   box-shadow: var(--shadow);
+}
+
+.list-panel {
+  overflow: hidden;
+}
+
+.panel-heading {
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 16px;
+}
+
+.panel-heading h3 {
+  font-size: 14px;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.panel-heading span {
+  background: var(--panel-soft);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 3px 8px;
 }
 
 .plan-list {
@@ -469,9 +542,18 @@ h2 {
   }
 
   .topbar,
+  .section-heading,
   .top-actions {
     align-items: start;
     justify-content: start;
+  }
+
+  .section-heading {
+    display: grid;
+  }
+
+  .section-heading p:last-child {
+    text-align: left;
   }
 
   .sync-note {
