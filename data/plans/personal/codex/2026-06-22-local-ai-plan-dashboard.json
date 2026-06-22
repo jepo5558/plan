@@ -1,0 +1,55 @@
+{
+  "id": "2026-06-22-local-ai-plan-dashboard",
+  "title": "Local AI plan dashboard",
+  "context": "personal",
+  "agent": "codex",
+  "project": "plan-dashboard",
+  "status": "active",
+  "priority": "high",
+  "createdAt": "2026-06-22T23:40:00+09:00",
+  "updatedAt": "2026-06-22T23:40:00+09:00",
+  "dueDate": null,
+  "originalRequest": "local dashboard로 해서 진행하자. 그리고 반드시 md 파일로 저장을 해서 다른 agent가 참조할 수 있도록 하자.",
+  "interpretedGoal": "Create a private local dashboard workflow where multiple AI agents write shared plan records into a GitHub repository and refer to Markdown coordination documents.",
+  "visibility": "private",
+  "privacyNotes": "",
+  "tags": ["dashboard", "ai-agent", "local-first"],
+  "tasks": [
+    {
+      "id": "task-1",
+      "title": "Create Markdown planning documents",
+      "status": "done",
+      "notes": "Project plan, agent protocol, data schema, and roadmap were created."
+    },
+    {
+      "id": "task-2",
+      "title": "Create sample data structure",
+      "status": "doing",
+      "notes": "Add personal Codex and work Claude sample plan files."
+    },
+    {
+      "id": "task-3",
+      "title": "Build local dashboard skeleton",
+      "status": "todo",
+      "notes": "Use a local-first React/Vite dashboard unless the project direction changes."
+    }
+  ],
+  "updates": [
+    {
+      "at": "2026-06-22T23:40:00+09:00",
+      "by": "codex",
+      "message": "Created initial local dashboard plan record."
+    }
+  ],
+  "links": [
+    {
+      "label": "Agent protocol",
+      "url": "docs/AGENT_PROTOCOL.md"
+    },
+    {
+      "label": "Data schema",
+      "url": "docs/DATA_SCHEMA.md"
+    }
+  ]
+}
+

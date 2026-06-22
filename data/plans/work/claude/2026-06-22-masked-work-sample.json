@@ -1,0 +1,40 @@
+{
+  "id": "2026-06-22-masked-work-sample",
+  "title": "Masked work planning sample",
+  "context": "work",
+  "agent": "claude",
+  "project": "work-project-sample",
+  "status": "planned",
+  "priority": "medium",
+  "createdAt": "2026-06-22T23:40:00+09:00",
+  "updatedAt": "2026-06-22T23:40:00+09:00",
+  "dueDate": null,
+  "originalRequest": "Work request intentionally summarized. Sensitive company details are not included in this sample.",
+  "interpretedGoal": "Demonstrate how a work-related Claude record should be stored with private visibility and masked details.",
+  "visibility": "private",
+  "privacyNotes": "This sample intentionally avoids customer names, internal systems, credentials, URLs, and proprietary details.",
+  "tags": ["work", "sample", "masked"],
+  "tasks": [
+    {
+      "id": "task-1",
+      "title": "Summarize work request without sensitive details",
+      "status": "todo",
+      "notes": "Use neutral project labels and avoid confidential identifiers."
+    },
+    {
+      "id": "task-2",
+      "title": "Confirm dashboard can filter work records",
+      "status": "todo",
+      "notes": "Work context should be clearly separated from personal context."
+    }
+  ],
+  "updates": [
+    {
+      "at": "2026-06-22T23:40:00+09:00",
+      "by": "codex",
+      "message": "Created masked work sample for Claude records."
+    }
+  ],
+  "links": []
+}
+

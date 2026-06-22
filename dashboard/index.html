@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Plan Dashboard</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div>
+          <p class="eyebrow">Local Dashboard</p>
+          <h1>AI Plans</h1>
+        </div>
+        <nav class="nav-list" aria-label="Dashboard views">
+          <button class="nav-item active" type="button" data-view="plans">Plans</button>
+          <button class="nav-item" type="button" data-view="blocked">Blocked</button>
+          <button class="nav-item" type="button" data-view="done">Done</button>
+        </nav>
+      </aside>
+
+      <main class="main">
+        <section class="topbar">
+          <div>
+            <p class="eyebrow">Private Repository View</p>
+            <h2>Shared agent work queue</h2>
+          </div>
+          <div class="sync-note">Run from local repo after pulling latest changes.</div>
+        </section>
+
+        <section class="stats-grid" aria-label="Plan summary">
+          <div class="stat">
+            <span class="stat-value" id="stat-total">0</span>
+            <span class="stat-label">Total</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value" id="stat-active">0</span>
+            <span class="stat-label">Active</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value" id="stat-blocked">0</span>
+            <span class="stat-label">Blocked</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value" id="stat-done">0</span>
+            <span class="stat-label">Done</span>
+          </div>
+        </section>
+
+        <section class="filters" aria-label="Plan filters">
+          <label>
+            Context
+            <select id="filter-context">
+              <option value="all">All</option>
+            </select>
+          </label>
+          <label>
+            Agent
+            <select id="filter-agent">
+              <option value="all">All</option>
+            </select>
+          </label>
+          <label>
+            Project
+            <select id="filter-project">
+              <option value="all">All</option>
+            </select>
+          </label>
+          <label>
+            Status
+            <select id="filter-status">
+              <option value="all">All</option>
+            </select>
+          </label>
+          <label>
+            Priority
+            <select id="filter-priority">
+              <option value="all">All</option>
+            </select>
+          </label>
+        </section>
+
+        <section class="content-grid">
+          <div class="plan-list" id="plan-list" aria-label="Plan list"></div>
+          <article class="detail-panel" id="plan-detail">
+            <p class="empty-state">Select a plan to inspect request, goal, tasks, and updates.</p>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <script src="./app.js" type="module"></script>
+  </body>
+</html>
+
