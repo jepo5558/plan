@@ -60,11 +60,17 @@ there.
 The dashboard detail panel includes status buttons.
 
 Status changes are saved back to the matching JSON file through the local Node
-server API. For this reason, use the recommended Node command above when you
-want dashboard edits to persist.
+server API. The local server also commits and pushes the changed plan file to
+GitHub so GitHub Pages can show the updated status after Pages refreshes.
 
 The Python static server can display the dashboard, but it cannot save status
 changes.
+
+The GitHub sync requires:
+
+- The local repository has `origin` set to the GitHub repository.
+- Your Git authentication is available locally.
+- The working tree does not have unrelated conflicting changes.
 
 ## Validate Plan Data
 

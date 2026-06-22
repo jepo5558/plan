@@ -71,6 +71,7 @@ const translations = {
     noUpdates: "No updates recorded.",
     noDate: "No date",
     statusUpdateFailed: "Could not update status.",
+    syncFailed: "Saved locally, but GitHub sync failed. Check the local server log.",
     readOnlyMode: "Status editing is available only on the local Node server.",
     serverHelp: "Start the local Node server, then open the dashboard again.",
     values: {
@@ -123,6 +124,7 @@ const translations = {
     noUpdates: "\ub4f1\ub85d\ub41c \uc5c5\ub370\uc774\ud2b8\uac00 \uc5c6\uc2b5\ub2c8\ub2e4.",
     noDate: "\ub0a0\uc9dc \uc5c6\uc74c",
     statusUpdateFailed: "\uc0c1\ud0dc\ub97c \ubcc0\uacbd\ud560 \uc218 \uc5c6\uc2b5\ub2c8\ub2e4.",
+    syncFailed: "\ub85c\uceec\uc5d0\ub294 \uc800\uc7a5\ub410\uc9c0\ub9cc GitHub \ub3d9\uae30\ud654\uc5d0 \uc2e4\ud328\ud588\uc2b5\ub2c8\ub2e4. \ub85c\uceec \uc11c\ubc84 \ub85c\uadf8\ub97c \ud655\uc778\ud558\uc138\uc694.",
     readOnlyMode: "\uc0c1\ud0dc \ubcc0\uacbd\uc740 \ub85c\uceec Node \uc11c\ubc84\uc5d0\uc11c\ub9cc \uac00\ub2a5\ud569\ub2c8\ub2e4.",
     serverHelp: "\ub85c\uceec Node \uc11c\ubc84\ub97c \uc2e4\ud589\ud55c \ub4a4 \ub300\uc2dc\ubcf4\ub4dc\ub97c \ub2e4\uc2dc \uc5ec\uc138\uc694.",
     values: {
@@ -449,6 +451,10 @@ async function updatePlanStatus(planId, nextStatus) {
 
   if (index >= 0) {
     state.plans[index] = payload.plan;
+  }
+
+  if (payload.sync && !payload.sync.ok) {
+    alert(t("syncFailed"));
   }
 
   state.plans.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));

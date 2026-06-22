@@ -1,6 +1,7 @@
 const fs = require("node:fs");
 const http = require("node:http");
 const path = require("node:path");
+const { execFile } = require("node:child_process");
 
 const rootDir = path.resolve(__dirname, "..");
 const port = Number(process.env.PORT || 5173);
@@ -106,10 +107,81 @@ function handleStatusUpdate(request, response, requestUrl) {
       });
 
       fs.writeFileSync(planPath, `${JSON.stringify(plan, null, 2)}\n`, "utf8");
-      sendJson(response, 200, { plan });
+      syncPlanChange(relativePlanPath, plan, (syncError, syncResult) => {
+        if (syncError) {
+          sendJson(response, 200, {
+            plan,
+            sync: {
+              ok: false,
+              error: syncError.message,
+              output: syncError.output || ""
+            }
+          });
+          return;
+        }
+
+        sendJson(response, 200, {
+          plan,
+          sync: {
+            ok: true,
+            output: syncResult
+          }
+        });
+      });
     } catch (writeError) {
       sendJson(response, 500, { error: writeError.message });
     }
+  });
+}
+
+function syncPlanChange(relativePlanPath, plan, callback) {
+  const commitMessage = `Update plan status: ${plan.id}`;
+
+  runGit(["add", relativePlanPath], (addError, addOutput) => {
+    if (addError) {
+      callback(addError);
+      return;
+    }
+
+    runGit(["commit", "-m", commitMessage], (commitError, commitOutput) => {
+      const nothingToCommit =
+        commitError && `${commitError.output || ""}`.includes("nothing to commit");
+
+      if (commitError && !nothingToCommit) {
+        callback(commitError);
+        return;
+      }
+
+      runGit(["pull", "--rebase", "origin", "main"], (pullError, pullOutput) => {
+        if (pullError) {
+          callback(pullError);
+          return;
+        }
+
+        runGit(["push", "origin", "main"], (pushError, pushOutput) => {
+          if (pushError) {
+            callback(pushError);
+            return;
+          }
+
+          callback(null, [addOutput, commitOutput, pullOutput, pushOutput].join("\n"));
+        });
+      });
+    });
+  });
+}
+
+function runGit(args, callback) {
+  execFile("git", args, { cwd: rootDir, windowsHide: true }, (error, stdout, stderr) => {
+    const output = `${stdout || ""}${stderr || ""}`;
+
+    if (error) {
+      error.output = output;
+      callback(error);
+      return;
+    }
+
+    callback(null, output);
   });
 }
 
