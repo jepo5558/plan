@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="ko">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,71 +10,80 @@
     <div class="app-shell">
       <aside class="sidebar">
         <div>
-          <p class="eyebrow">Local Dashboard</p>
-          <h1>AI Plans</h1>
+          <p class="eyebrow" data-i18n="sidebarEyebrow">Local Dashboard</p>
+          <h1 data-i18n="appTitle">AI Plans</h1>
         </div>
         <nav class="nav-list" aria-label="Dashboard views">
-          <button class="nav-item active" type="button" data-view="plans">Plans</button>
-          <button class="nav-item" type="button" data-view="blocked">Blocked</button>
-          <button class="nav-item" type="button" data-view="done">Done</button>
+          <button class="nav-item active" type="button" data-view="plans" data-i18n="navPlans">Plans</button>
+          <button class="nav-item" type="button" data-view="blocked" data-i18n="navBlocked">Blocked</button>
+          <button class="nav-item" type="button" data-view="done" data-i18n="navDone">Done</button>
         </nav>
       </aside>
 
       <main class="main">
         <section class="topbar">
           <div>
-            <p class="eyebrow">Private Repository View</p>
-            <h2>Shared agent work queue</h2>
+            <p class="eyebrow" data-i18n="topEyebrow">Private Repository View</p>
+            <h2 data-i18n="topTitle">Shared agent work queue</h2>
           </div>
-          <div class="sync-note">Run from local repo after pulling latest changes.</div>
+          <div class="top-actions">
+            <label class="language-select">
+              <span data-i18n="languageLabel">Language</span>
+              <select id="language-select">
+                <option value="ko">한국어</option>
+                <option value="en">English</option>
+              </select>
+            </label>
+            <div class="sync-note" data-i18n="syncNote">Run from local repo after pulling latest changes.</div>
+          </div>
         </section>
 
         <section class="stats-grid" aria-label="Plan summary">
           <div class="stat">
             <span class="stat-value" id="stat-total">0</span>
-            <span class="stat-label">Total</span>
+            <span class="stat-label" data-i18n="statTotal">Total</span>
           </div>
           <div class="stat">
             <span class="stat-value" id="stat-active">0</span>
-            <span class="stat-label">Active</span>
+            <span class="stat-label" data-i18n="statActive">Active</span>
           </div>
           <div class="stat">
             <span class="stat-value" id="stat-blocked">0</span>
-            <span class="stat-label">Blocked</span>
+            <span class="stat-label" data-i18n="statBlocked">Blocked</span>
           </div>
           <div class="stat">
             <span class="stat-value" id="stat-done">0</span>
-            <span class="stat-label">Done</span>
+            <span class="stat-label" data-i18n="statDone">Done</span>
           </div>
         </section>
 
         <section class="filters" aria-label="Plan filters">
           <label>
-            Context
+            <span data-i18n="filterContext">Context</span>
             <select id="filter-context">
               <option value="all">All</option>
             </select>
           </label>
           <label>
-            Agent
+            <span data-i18n="filterAgent">Agent</span>
             <select id="filter-agent">
               <option value="all">All</option>
             </select>
           </label>
           <label>
-            Project
+            <span data-i18n="filterProject">Project</span>
             <select id="filter-project">
               <option value="all">All</option>
             </select>
           </label>
           <label>
-            Status
+            <span data-i18n="filterStatus">Status</span>
             <select id="filter-status">
               <option value="all">All</option>
             </select>
           </label>
           <label>
-            Priority
+            <span data-i18n="filterPriority">Priority</span>
             <select id="filter-priority">
               <option value="all">All</option>
             </select>
@@ -84,7 +93,7 @@
         <section class="content-grid">
           <div class="plan-list" id="plan-list" aria-label="Plan list"></div>
           <article class="detail-panel" id="plan-detail">
-            <p class="empty-state">Select a plan to inspect request, goal, tasks, and updates.</p>
+            <p class="empty-state" data-i18n="emptyDetail">Select a plan to inspect request, goal, tasks, and updates.</p>
           </article>
         </section>
       </main>
@@ -93,4 +102,3 @@
     <script src="./app.js" type="module"></script>
   </body>
 </html>
-

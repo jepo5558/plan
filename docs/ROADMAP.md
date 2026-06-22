@@ -160,9 +160,11 @@ Potential deliverables:
 - Add due date and overdue indicators.
 - Add a manual refresh button.
 - Add a compact table view for many plans.
+- Add language selection for Korean and English.
 
 Acceptance Criteria:
 
 - Dashboard remains useful as the number of plan files grows.
 - Invalid or missing plan files are visible to the user.
 - Filters and search make work/personal context easy to separate.
+- UI labels can be viewed in Korean or English.
