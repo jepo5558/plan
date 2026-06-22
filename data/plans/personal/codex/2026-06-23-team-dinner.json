@@ -1,0 +1,34 @@
+{
+  "id": "2026-06-23-team-dinner",
+  "title": "Team dinner",
+  "context": "personal",
+  "agent": "codex",
+  "project": "personal-schedule",
+  "status": "planned",
+  "priority": "medium",
+  "createdAt": "2026-06-23T00:00:00+09:00",
+  "updatedAt": "2026-06-23T00:00:00+09:00",
+  "dueDate": "2026-06-23",
+  "originalRequest": "6월 23일날은 팀회식이야. plan에 기록해줘",
+  "interpretedGoal": "Record that there is a team dinner on June 23, 2026.",
+  "visibility": "private",
+  "privacyNotes": "",
+  "tags": ["schedule", "team-dinner"],
+  "tasks": [
+    {
+      "id": "task-1",
+      "title": "Attend team dinner",
+      "status": "todo",
+      "notes": "Scheduled for June 23, 2026."
+    }
+  ],
+  "updates": [
+    {
+      "at": "2026-06-23T00:00:00+09:00",
+      "by": "codex",
+      "message": "Recorded team dinner schedule."
+    }
+  ],
+  "links": []
+}
+

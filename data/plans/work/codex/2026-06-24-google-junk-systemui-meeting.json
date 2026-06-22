@@ -1,0 +1,34 @@
+{
+  "id": "2026-06-24-google-junk-systemui-meeting",
+  "title": "Google and junk systemui meeting",
+  "context": "work",
+  "agent": "codex",
+  "project": "work-schedule",
+  "status": "planned",
+  "priority": "medium",
+  "createdAt": "2026-06-23T00:00:00+09:00",
+  "updatedAt": "2026-06-23T00:00:00+09:00",
+  "dueDate": "2026-06-24",
+  "originalRequest": "6월 24일은 구글과 junk systemui 관련해서 회의가 있어. plan에 기록해줘",
+  "interpretedGoal": "Record a work meeting on June 24, 2026 related to Google and junk systemui.",
+  "visibility": "private",
+  "privacyNotes": "Recorded as private work context because this may involve company or partner-related information.",
+  "tags": ["schedule", "meeting", "work"],
+  "tasks": [
+    {
+      "id": "task-1",
+      "title": "Attend Google and junk systemui meeting",
+      "status": "todo",
+      "notes": "Scheduled for June 24, 2026."
+    }
+  ],
+  "updates": [
+    {
+      "at": "2026-06-23T00:00:00+09:00",
+      "by": "codex",
+      "message": "Recorded work meeting schedule."
+    }
+  ],
+  "links": []
+}
+
