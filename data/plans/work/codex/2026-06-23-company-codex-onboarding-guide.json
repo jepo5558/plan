@@ -1,0 +1,69 @@
+{
+  "id": "2026-06-23-company-codex-onboarding-guide",
+  "title": "Company Codex onboarding guide for plan dashboard",
+  "context": "work",
+  "agent": "codex",
+  "project": "plan-dashboard",
+  "status": "done",
+  "priority": "high",
+  "createdAt": "2026-06-23T00:00:00+09:00",
+  "updatedAt": "2026-06-23T00:00:00+09:00",
+  "dueDate": null,
+  "originalRequest": "방금 답변을 plan에 저장해줘.",
+  "interpretedGoal": "Record the instructions for allowing a company Codex agent to access and write to the shared plan dashboard repository.",
+  "visibility": "private",
+  "privacyNotes": "This is a work-agent operating guide. It contains no credentials or company secrets.",
+  "tags": ["company-codex", "agent-protocol", "git-sync", "work"],
+  "tasks": [
+    {
+      "id": "task-1",
+      "title": "Tell company Codex to read agent protocol documents",
+      "status": "done",
+      "notes": "Primary references are docs/AGENT_PROTOCOL.md and docs/DATA_SCHEMA.md. Also read docs/GIT_SYNC_WORKFLOW.md and docs/AGENT_PROMPT_TEMPLATE.md."
+    },
+    {
+      "id": "task-2",
+      "title": "Use synced plan storage for normal plan records",
+      "status": "done",
+      "notes": "When the user says 'plan에 저장해줘', create or update data/plans/{context}/{agent}/{plan-id}.json, update data/plans-index.json, validate, commit, pull --rebase, and push."
+    },
+    {
+      "id": "task-3",
+      "title": "Use local-only storage when requested",
+      "status": "done",
+      "notes": "When the user says 'local plan에 저장해줘', use data/local-plans/{context}/{agent}/ and data/local-plans-index.json. Do not push local-only records."
+    },
+    {
+      "id": "task-4",
+      "title": "Apply work privacy rules",
+      "status": "done",
+      "notes": "For company work, use context: work and avoid credentials, tokens, customer-identifying data, internal URLs, and raw confidential text."
+    }
+  ],
+  "updates": [
+    {
+      "at": "2026-06-23T00:00:00+09:00",
+      "by": "codex",
+      "message": "Saved company Codex setup and operating instructions as a plan record."
+    }
+  ],
+  "links": [
+    {
+      "label": "Agent protocol",
+      "url": "docs/AGENT_PROTOCOL.md"
+    },
+    {
+      "label": "Data schema",
+      "url": "docs/DATA_SCHEMA.md"
+    },
+    {
+      "label": "Git sync workflow",
+      "url": "docs/GIT_SYNC_WORKFLOW.md"
+    },
+    {
+      "label": "Agent prompt template",
+      "url": "docs/AGENT_PROMPT_TEMPLATE.md"
+    }
+  ]
+}
+
