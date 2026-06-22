@@ -306,6 +306,29 @@ h2 {
   text-transform: uppercase;
 }
 
+.status-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.status-button {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--text);
+  cursor: pointer;
+  min-height: 34px;
+  padding: 7px 10px;
+}
+
+.status-button:hover,
+.status-button.active {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 .request-box {
   background: var(--panel-soft);
   border-radius: 8px;

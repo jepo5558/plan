@@ -161,6 +161,7 @@ Potential deliverables:
 - Add a manual refresh button.
 - Add a compact table view for many plans.
 - Add language selection for Korean and English.
+- Add dashboard-side status editing.
 
 Acceptance Criteria:
 
@@ -168,3 +169,4 @@ Acceptance Criteria:
 - Invalid or missing plan files are visible to the user.
 - Filters and search make work/personal context easy to separate.
 - UI labels can be viewed in Korean or English.
+- Plan status can be changed from the dashboard and persisted to JSON.

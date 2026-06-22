@@ -16,6 +16,12 @@ const mimeTypes = {
 
 const server = http.createServer((request, response) => {
   const requestUrl = new URL(request.url, `http://${host}:${port}`);
+
+  if (request.method === "PUT" && requestUrl.pathname.startsWith("/api/plans/")) {
+    handleStatusUpdate(request, response, requestUrl);
+    return;
+  }
+
   let filePath = path.join(rootDir, decodeURIComponent(requestUrl.pathname));
 
   if (!filePath.startsWith(rootDir)) {
@@ -47,7 +53,87 @@ const server = http.createServer((request, response) => {
   });
 });
 
+function handleStatusUpdate(request, response, requestUrl) {
+  const planId = decodeURIComponent(requestUrl.pathname.replace("/api/plans/", "").replace("/status", ""));
+
+  if (!requestUrl.pathname.endsWith("/status") || !planId) {
+    sendJson(response, 404, { error: "Unknown API route." });
+    return;
+  }
+
+  readRequestBody(request, (error, body) => {
+    if (error) {
+      sendJson(response, 400, { error: "Invalid request body." });
+      return;
+    }
+
+    const allowedStatuses = new Set(["planned", "active", "blocked", "review", "done", "archived"]);
+    const nextStatus = body.status;
+
+    if (!allowedStatuses.has(nextStatus)) {
+      sendJson(response, 400, { error: "Invalid status." });
+      return;
+    }
+
+    try {
+      const indexPath = path.join(rootDir, "data", "plans-index.json");
+      const planPaths = JSON.parse(fs.readFileSync(indexPath, "utf8"));
+      const relativePlanPath = planPaths.find((item) => path.basename(item, ".json") === planId);
+
+      if (!relativePlanPath) {
+        sendJson(response, 404, { error: "Plan not found." });
+        return;
+      }
+
+      const planPath = path.join(rootDir, relativePlanPath);
+
+      if (!planPath.startsWith(rootDir)) {
+        sendJson(response, 403, { error: "Invalid plan path." });
+        return;
+      }
+
+      const plan = JSON.parse(fs.readFileSync(planPath, "utf8"));
+      const previousStatus = plan.status;
+      const now = new Date().toISOString();
+
+      plan.status = nextStatus;
+      plan.updatedAt = now;
+      plan.updates = Array.isArray(plan.updates) ? plan.updates : [];
+      plan.updates.unshift({
+        at: now,
+        by: "dashboard",
+        message: `Status changed from ${previousStatus} to ${nextStatus}.`
+      });
+
+      fs.writeFileSync(planPath, `${JSON.stringify(plan, null, 2)}\n`, "utf8");
+      sendJson(response, 200, { plan });
+    } catch (writeError) {
+      sendJson(response, 500, { error: writeError.message });
+    }
+  });
+}
+
+function readRequestBody(request, callback) {
+  let data = "";
+
+  request.on("data", (chunk) => {
+    data += chunk;
+  });
+
+  request.on("end", () => {
+    try {
+      callback(null, JSON.parse(data || "{}"));
+    } catch (error) {
+      callback(error);
+    }
+  });
+}
+
+function sendJson(response, statusCode, payload) {
+  response.writeHead(statusCode, { "content-type": "application/json; charset=utf-8" });
+  response.end(JSON.stringify(payload));
+}
+
 server.listen(port, host, () => {
   console.log(`AI Plan Dashboard: http://${host}:${port}/dashboard/`);
 });
-

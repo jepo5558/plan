@@ -55,6 +55,17 @@ http://127.0.0.1:5173/dashboard/
 The dashboard reads `data/plans-index.json`, then loads the plan files listed
 there.
 
+## Change Status In The Dashboard
+
+The dashboard detail panel includes status buttons.
+
+Status changes are saved back to the matching JSON file through the local Node
+server API. For this reason, use the recommended Node command above when you
+want dashboard edits to persist.
+
+The Python static server can display the dashboard, but it cannot save status
+changes.
+
 ## Validate Plan Data
 
 Run:

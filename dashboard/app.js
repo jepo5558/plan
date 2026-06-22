@@ -1,3 +1,5 @@
+const PLAN_STATUSES = ["planned", "active", "blocked", "review", "done", "archived"];
+
 const state = {
   plans: [],
   filteredPlans: [],
@@ -57,6 +59,7 @@ const translations = {
     all: "All",
     updated: "Updated",
     created: "Created",
+    changeStatus: "Change Status",
     interpretedGoal: "Interpreted Goal",
     originalRequest: "Original Request",
     tasks: "Tasks",
@@ -67,7 +70,8 @@ const translations = {
     noTasks: "No tasks recorded.",
     noUpdates: "No updates recorded.",
     noDate: "No date",
-    serverHelp: "Start a local HTTP server from the repository root and open dashboard/index.html.",
+    statusUpdateFailed: "Could not update status.",
+    serverHelp: "Start the local Node server, then open the dashboard again.",
     values: {
       personal: "personal",
       work: "work",
@@ -85,52 +89,54 @@ const translations = {
     }
   },
   ko: {
-    sidebarEyebrow: "로컬 대시보드",
-    appTitle: "AI 계획",
-    navPlans: "전체 계획",
-    navBlocked: "막힌 항목",
-    navDone: "완료",
-    topEyebrow: "비공개 저장소 보기",
-    topTitle: "공유 AI 작업 목록",
-    languageLabel: "언어",
-    syncNote: "최신 변경사항을 pull한 뒤 로컬 저장소에서 실행합니다.",
-    statTotal: "전체",
-    statActive: "진행 중",
-    statBlocked: "막힘",
-    statDone: "완료",
-    filterContext: "구분",
+    sidebarEyebrow: "\ub85c\uceec \ub300\uc2dc\ubcf4\ub4dc",
+    appTitle: "AI \uacc4\ud68d",
+    navPlans: "\uc804\uccb4 \uacc4\ud68d",
+    navBlocked: "\ub9c9\ud78c \ud56d\ubaa9",
+    navDone: "\uc644\ub8cc",
+    topEyebrow: "\ube44\uacf5\uac1c \uc800\uc7a5\uc18c \ubcf4\uae30",
+    topTitle: "\uacf5\uc720 AI \uc791\uc5c5 \ubaa9\ub85d",
+    languageLabel: "\uc5b8\uc5b4",
+    syncNote: "\ucd5c\uc2e0 \ubcc0\uacbd\uc0ac\ud56d\uc744 pull\ud55c \ub4a4 \ub85c\uceec \uc800\uc7a5\uc18c\uc5d0\uc11c \uc2e4\ud589\ud569\ub2c8\ub2e4.",
+    statTotal: "\uc804\uccb4",
+    statActive: "\uc9c4\ud589 \uc911",
+    statBlocked: "\ub9c9\ud798",
+    statDone: "\uc644\ub8cc",
+    filterContext: "\uad6c\ubd84",
     filterAgent: "Agent",
-    filterProject: "프로젝트",
-    filterStatus: "상태",
-    filterPriority: "우선순위",
-    all: "전체",
-    updated: "수정",
-    created: "생성",
-    interpretedGoal: "AI 해석 목표",
-    originalRequest: "원문 요청",
-    tasks: "작업",
-    updates: "업데이트",
-    by: "작성",
-    noPlans: "현재 필터와 일치하는 계획이 없습니다.",
-    emptyDetail: "계획을 선택하면 요청, 목표, 작업, 업데이트를 볼 수 있습니다.",
-    noTasks: "등록된 작업이 없습니다.",
-    noUpdates: "등록된 업데이트가 없습니다.",
-    noDate: "날짜 없음",
-    serverHelp: "저장소 루트에서 로컬 HTTP 서버를 실행한 뒤 dashboard/index.html을 여세요.",
+    filterProject: "\ud504\ub85c\uc81d\ud2b8",
+    filterStatus: "\uc0c1\ud0dc",
+    filterPriority: "\uc6b0\uc120\uc21c\uc704",
+    all: "\uc804\uccb4",
+    updated: "\uc218\uc815",
+    created: "\uc0dd\uc131",
+    changeStatus: "\uc0c1\ud0dc \ubcc0\uacbd",
+    interpretedGoal: "AI \ud574\uc11d \ubaa9\ud45c",
+    originalRequest: "\uc6d0\ubb38 \uc694\uccad",
+    tasks: "\uc791\uc5c5",
+    updates: "\uc5c5\ub370\uc774\ud2b8",
+    by: "\uc791\uc131",
+    noPlans: "\ud604\uc7ac \ud544\ud130\uc640 \uc77c\uce58\ud558\ub294 \uacc4\ud68d\uc774 \uc5c6\uc2b5\ub2c8\ub2e4.",
+    emptyDetail: "\uacc4\ud68d\uc744 \uc120\ud0dd\ud558\uba74 \uc694\uccad, \ubaa9\ud45c, \uc791\uc5c5, \uc5c5\ub370\uc774\ud2b8\ub97c \ubcfc \uc218 \uc788\uc2b5\ub2c8\ub2e4.",
+    noTasks: "\ub4f1\ub85d\ub41c \uc791\uc5c5\uc774 \uc5c6\uc2b5\ub2c8\ub2e4.",
+    noUpdates: "\ub4f1\ub85d\ub41c \uc5c5\ub370\uc774\ud2b8\uac00 \uc5c6\uc2b5\ub2c8\ub2e4.",
+    noDate: "\ub0a0\uc9dc \uc5c6\uc74c",
+    statusUpdateFailed: "\uc0c1\ud0dc\ub97c \ubcc0\uacbd\ud560 \uc218 \uc5c6\uc2b5\ub2c8\ub2e4.",
+    serverHelp: "\ub85c\uceec Node \uc11c\ubc84\ub97c \uc2e4\ud589\ud55c \ub4a4 \ub300\uc2dc\ubcf4\ub4dc\ub97c \ub2e4\uc2dc \uc5ec\uc138\uc694.",
     values: {
-      personal: "개인",
-      work: "업무",
-      planned: "예정",
-      active: "진행 중",
-      blocked: "막힘",
-      review: "검토",
-      done: "완료",
-      archived: "보관",
-      todo: "할 일",
-      doing: "진행 중",
-      high: "높음",
-      medium: "보통",
-      low: "낮음"
+      personal: "\uac1c\uc778",
+      work: "\uc5c5\ubb34",
+      planned: "\uc608\uc815",
+      active: "\uc9c4\ud589 \uc911",
+      blocked: "\ub9c9\ud798",
+      review: "\uac80\ud1a0",
+      done: "\uc644\ub8cc",
+      archived: "\ubcf4\uad00",
+      todo: "\ud560 \uc77c",
+      doing: "\uc9c4\ud589 \uc911",
+      high: "\ub192\uc74c",
+      medium: "\ubcf4\ud1b5",
+      low: "\ub0ae\uc74c"
     }
   }
 };
@@ -145,7 +151,7 @@ async function loadPlans() {
   const planPaths = await indexResponse.json();
   const planResponses = await Promise.all(
     planPaths.map(async (path) => {
-      const response = await fetch(`../${path}`);
+      const response = await fetch(`../${path}?t=${Date.now()}`);
 
       if (!response.ok) {
         throw new Error(`Could not load ${path}`);
@@ -264,8 +270,7 @@ function renderDetail() {
   const plan = state.plans.find((item) => item.id === state.selectedId);
 
   if (!plan) {
-    elements.detail.innerHTML =
-      `<p class="empty-state">${t("emptyDetail")}</p>`;
+    elements.detail.innerHTML = `<p class="empty-state">${t("emptyDetail")}</p>`;
     return;
   }
 
@@ -280,6 +285,13 @@ function renderDetail() {
         <span>${t("created")} ${formatDate(plan.createdAt)}</span>
       </div>
     </header>
+
+    <section class="detail-section">
+      <h3>${t("changeStatus")}</h3>
+      <div class="status-actions">
+        ${renderStatusButtons(plan.status)}
+      </div>
+    </section>
 
     <section class="detail-section">
       <h3>${t("interpretedGoal")}</h3>
@@ -305,6 +317,17 @@ function renderDetail() {
       </ul>
     </section>
   `;
+}
+
+function renderStatusButtons(currentStatus) {
+  return PLAN_STATUSES.map((status) => {
+    const active = status === currentStatus ? " active" : "";
+    return `
+      <button class="status-button${active}" type="button" data-next-status="${status}">
+        ${escapeHtml(translateValue(status))}
+      </button>
+    `;
+  }).join("");
 }
 
 function renderTasks(tasks = []) {
@@ -364,6 +387,16 @@ function bindEvents() {
     render();
   });
 
+  elements.detail.addEventListener("click", async (event) => {
+    const button = event.target.closest("[data-next-status]");
+
+    if (!button || !state.selectedId) {
+      return;
+    }
+
+    await updatePlanStatus(state.selectedId, button.dataset.nextStatus);
+  });
+
   elements.navItems.forEach((item) => {
     item.addEventListener("click", () => {
       state.view = item.dataset.view;
@@ -386,6 +419,32 @@ function bindEvents() {
     applyLanguage();
     render();
   });
+}
+
+async function updatePlanStatus(planId, nextStatus) {
+  const response = await fetch(`/api/plans/${encodeURIComponent(planId)}/status`, {
+    method: "PUT",
+    headers: {
+      "content-type": "application/json"
+    },
+    body: JSON.stringify({ status: nextStatus })
+  });
+
+  if (!response.ok) {
+    alert(t("statusUpdateFailed"));
+    return;
+  }
+
+  const payload = await response.json();
+  const index = state.plans.findIndex((plan) => plan.id === planId);
+
+  if (index >= 0) {
+    state.plans[index] = payload.plan;
+  }
+
+  state.plans.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+  updateFilterOptions();
+  render();
 }
 
 function formatDate(value) {
