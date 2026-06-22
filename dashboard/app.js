@@ -71,6 +71,7 @@ const translations = {
     noUpdates: "No updates recorded.",
     noDate: "No date",
     statusUpdateFailed: "Could not update status.",
+    readOnlyMode: "Status editing is available only on the local Node server.",
     serverHelp: "Start the local Node server, then open the dashboard again.",
     values: {
       personal: "personal",
@@ -122,6 +123,7 @@ const translations = {
     noUpdates: "\ub4f1\ub85d\ub41c \uc5c5\ub370\uc774\ud2b8\uac00 \uc5c6\uc2b5\ub2c8\ub2e4.",
     noDate: "\ub0a0\uc9dc \uc5c6\uc74c",
     statusUpdateFailed: "\uc0c1\ud0dc\ub97c \ubcc0\uacbd\ud560 \uc218 \uc5c6\uc2b5\ub2c8\ub2e4.",
+    readOnlyMode: "\uc0c1\ud0dc \ubcc0\uacbd\uc740 \ub85c\uceec Node \uc11c\ubc84\uc5d0\uc11c\ub9cc \uac00\ub2a5\ud569\ub2c8\ub2e4.",
     serverHelp: "\ub85c\uceec Node \uc11c\ubc84\ub97c \uc2e4\ud589\ud55c \ub4a4 \ub300\uc2dc\ubcf4\ub4dc\ub97c \ub2e4\uc2dc \uc5ec\uc138\uc694.",
     values: {
       personal: "\uac1c\uc778",
@@ -288,6 +290,7 @@ function renderDetail() {
 
     <section class="detail-section">
       <h3>${t("changeStatus")}</h3>
+      ${isReadOnlyHost() ? `<p class="empty-state">${t("readOnlyMode")}</p>` : ""}
       <div class="status-actions">
         ${renderStatusButtons(plan.status)}
       </div>
@@ -322,8 +325,9 @@ function renderDetail() {
 function renderStatusButtons(currentStatus) {
   return PLAN_STATUSES.map((status) => {
     const active = status === currentStatus ? " active" : "";
+    const disabled = isReadOnlyHost() ? " disabled" : "";
     return `
-      <button class="status-button${active}" type="button" data-next-status="${status}">
+      <button class="status-button${active}" type="button" data-next-status="${status}"${disabled}>
         ${escapeHtml(translateValue(status))}
       </button>
     `;
@@ -422,6 +426,11 @@ function bindEvents() {
 }
 
 async function updatePlanStatus(planId, nextStatus) {
+  if (isReadOnlyHost()) {
+    alert(t("readOnlyMode"));
+    return;
+  }
+
   const response = await fetch(`/api/plans/${encodeURIComponent(planId)}/status`, {
     method: "PUT",
     headers: {
@@ -464,6 +473,10 @@ function t(key) {
 
 function translateValue(value) {
   return translations[state.language].values[value] || value;
+}
+
+function isReadOnlyHost() {
+  return window.location.hostname !== "127.0.0.1" && window.location.hostname !== "localhost";
 }
 
 function escapeHtml(value) {
