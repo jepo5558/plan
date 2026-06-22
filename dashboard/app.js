@@ -33,6 +33,16 @@ const elements = {
     active: document.querySelector("#stat-active"),
     blocked: document.querySelector("#stat-blocked"),
     done: document.querySelector("#stat-done")
+  },
+  agenda: {
+    upcoming: document.querySelector("#agenda-upcoming"),
+    thisWeek: document.querySelector("#agenda-this-week"),
+    overdue: document.querySelector("#agenda-overdue"),
+    review: document.querySelector("#agenda-review"),
+    upcomingCount: document.querySelector("#agenda-upcoming-count"),
+    thisWeekCount: document.querySelector("#agenda-this-week-count"),
+    overdueCount: document.querySelector("#agenda-overdue-count"),
+    reviewCount: document.querySelector("#agenda-review-count")
   }
 };
 
@@ -56,6 +66,10 @@ const translations = {
     filterProject: "Project",
     filterStatus: "Status",
     filterPriority: "Priority",
+    agendaUpcoming: "Upcoming",
+    agendaThisWeek: "This Week Tasks",
+    agendaOverdue: "Overdue",
+    agendaReview: "Needs Review",
     all: "All",
     updated: "Updated",
     created: "Created",
@@ -69,6 +83,8 @@ const translations = {
     emptyDetail: "Select a plan to inspect request, goal, tasks, and updates.",
     noTasks: "No tasks recorded.",
     noUpdates: "No updates recorded.",
+    noAgendaItems: "No items.",
+    due: "Due",
     noDate: "No date",
     statusUpdateFailed: "Could not update status.",
     syncFailed: "Saved locally, but GitHub sync failed. Check the local server log.",
@@ -109,6 +125,10 @@ const translations = {
     filterProject: "\ud504\ub85c\uc81d\ud2b8",
     filterStatus: "\uc0c1\ud0dc",
     filterPriority: "\uc6b0\uc120\uc21c\uc704",
+    agendaUpcoming: "\ub2e4\uac00\uc624\ub294 \uc77c\uc815",
+    agendaThisWeek: "\uc774\ubc88 \uc8fc \ud560 \uc77c",
+    agendaOverdue: "\uc9c0\uc5f0",
+    agendaReview: "\uac80\ud1a0 \ud544\uc694",
     all: "\uc804\uccb4",
     updated: "\uc218\uc815",
     created: "\uc0dd\uc131",
@@ -122,6 +142,8 @@ const translations = {
     emptyDetail: "\uacc4\ud68d\uc744 \uc120\ud0dd\ud558\uba74 \uc694\uccad, \ubaa9\ud45c, \uc791\uc5c5, \uc5c5\ub370\uc774\ud2b8\ub97c \ubcfc \uc218 \uc788\uc2b5\ub2c8\ub2e4.",
     noTasks: "\ub4f1\ub85d\ub41c \uc791\uc5c5\uc774 \uc5c6\uc2b5\ub2c8\ub2e4.",
     noUpdates: "\ub4f1\ub85d\ub41c \uc5c5\ub370\uc774\ud2b8\uac00 \uc5c6\uc2b5\ub2c8\ub2e4.",
+    noAgendaItems: "\ud56d\ubaa9 \uc5c6\uc74c",
+    due: "\ub9c8\uac10",
     noDate: "\ub0a0\uc9dc \uc5c6\uc74c",
     statusUpdateFailed: "\uc0c1\ud0dc\ub97c \ubcc0\uacbd\ud560 \uc218 \uc5c6\uc2b5\ub2c8\ub2e4.",
     syncFailed: "\ub85c\uceec\uc5d0\ub294 \uc800\uc7a5\ub410\uc9c0\ub9cc GitHub \ub3d9\uae30\ud654\uc5d0 \uc2e4\ud328\ud588\uc2b5\ub2c8\ub2e4. \ub85c\uceec \uc11c\ubc84 \ub85c\uadf8\ub97c \ud655\uc778\ud558\uc138\uc694.",
@@ -233,6 +255,74 @@ function updateStats() {
   elements.stats.active.textContent = state.plans.filter((plan) => plan.status === "active").length;
   elements.stats.blocked.textContent = state.plans.filter((plan) => plan.status === "blocked").length;
   elements.stats.done.textContent = state.plans.filter((plan) => plan.status === "done").length;
+}
+
+function updateAgenda() {
+  const agenda = buildAgenda(state.plans);
+
+  renderAgendaList(elements.agenda.upcoming, agenda.upcoming);
+  renderAgendaList(elements.agenda.thisWeek, agenda.thisWeek);
+  renderAgendaList(elements.agenda.overdue, agenda.overdue);
+  renderAgendaList(elements.agenda.review, agenda.review);
+
+  elements.agenda.upcomingCount.textContent = agenda.upcoming.length;
+  elements.agenda.thisWeekCount.textContent = agenda.thisWeek.length;
+  elements.agenda.overdueCount.textContent = agenda.overdue.length;
+  elements.agenda.reviewCount.textContent = agenda.review.length;
+}
+
+function buildAgenda(plans) {
+  const today = startOfDay(new Date());
+  const weekEnd = endOfWeek(today);
+  const upcomingEnd = addDays(today, 14);
+  const openPlans = plans.filter((plan) => !["done", "archived"].includes(plan.status));
+  const withDueDate = openPlans
+    .map((plan) => ({ plan, dueDate: parseDateOnly(plan.dueDate) }))
+    .filter((item) => item.dueDate);
+
+  return {
+    overdue: withDueDate
+      .filter((item) => item.dueDate < today)
+      .sort(compareAgendaItems)
+      .map((item) => item.plan),
+    thisWeek: withDueDate
+      .filter((item) => item.dueDate >= today && item.dueDate <= weekEnd)
+      .sort(compareAgendaItems)
+      .map((item) => item.plan),
+    upcoming: withDueDate
+      .filter((item) => item.dueDate > weekEnd && item.dueDate <= upcomingEnd)
+      .sort(compareAgendaItems)
+      .map((item) => item.plan),
+    review: openPlans
+      .filter((plan) => plan.status === "review" || (plan.tags || []).includes("decision"))
+      .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
+  };
+}
+
+function compareAgendaItems(a, b) {
+  return a.dueDate.getTime() - b.dueDate.getTime();
+}
+
+function renderAgendaList(container, plans) {
+  if (plans.length === 0) {
+    container.innerHTML = `<p class="empty-state agenda-empty">${t("noAgendaItems")}</p>`;
+    return;
+  }
+
+  container.innerHTML = plans
+    .slice(0, 5)
+    .map((plan) => {
+      return `
+        <button class="agenda-item" type="button" data-plan-id="${escapeHtml(plan.id)}">
+          <span class="agenda-title">${escapeHtml(plan.title)}</span>
+          <span class="agenda-meta">
+            ${escapeHtml(translateValue(plan.status))}
+            ${plan.dueDate ? ` · ${t("due")} ${formatDateOnly(plan.dueDate)}` : ""}
+          </span>
+        </button>
+      `;
+    })
+    .join("");
 }
 
 function applyLanguage() {
@@ -392,6 +482,7 @@ function renderUpdates(updates = []) {
 function render() {
   applyFilters();
   updateStats();
+  updateAgenda();
   renderPlanList();
   renderDetail();
 }
@@ -406,6 +497,21 @@ function bindEvents() {
 
     state.selectedId = card.dataset.planId;
     render();
+  });
+
+  document.querySelectorAll(".agenda-list").forEach((list) => {
+    list.addEventListener("click", (event) => {
+      const card = event.target.closest("[data-plan-id]");
+
+      if (!card) {
+        return;
+      }
+
+      state.selectedId = card.dataset.planId;
+      state.view = "plans";
+      elements.navItems.forEach((navItem) => navItem.classList.toggle("active", navItem.dataset.view === "plans"));
+      render();
+    });
   });
 
   elements.detail.addEventListener("click", async (event) => {
@@ -486,6 +592,49 @@ function formatDate(value) {
     dateStyle: "medium",
     timeStyle: "short"
   }).format(new Date(value));
+}
+
+function formatDateOnly(value) {
+  const date = parseDateOnly(value);
+
+  if (!date) {
+    return t("noDate");
+  }
+
+  return new Intl.DateTimeFormat(state.language === "ko" ? "ko-KR" : "en", {
+    dateStyle: "medium"
+  }).format(date);
+}
+
+function parseDateOnly(value) {
+  if (!value || typeof value !== "string") {
+    return null;
+  }
+
+  const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+
+  if (!match) {
+    const fallback = new Date(value);
+    return Number.isNaN(fallback.getTime()) ? null : startOfDay(fallback);
+  }
+
+  return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+}
+
+function startOfDay(date) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
+function endOfWeek(date) {
+  const day = date.getDay();
+  const daysUntilSunday = (7 - day) % 7;
+  return addDays(date, daysUntilSunday);
+}
+
+function addDays(date, days) {
+  const next = new Date(date);
+  next.setDate(next.getDate() + days);
+  return next;
 }
 
 function t(key) {
